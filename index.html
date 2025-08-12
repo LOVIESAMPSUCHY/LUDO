@@ -2,774 +2,369 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ludo Club – Mateusz Edition (rozszerzone)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ludo Club — Mateusz Edition (Fixed + Pro)</title>
+<meta name="description" content="Jednoplikowa gra Ludo (Ludo Club style) — 2–4 graczy, offline, UNDO, autozapis, dźwięki, prosty bot.">
 <style>
-  :root {
-    --bg: #0f1220;
-    --panel: #181b2e;
-    --text: #e8e8ef;
-    --muted: #a9acc6;
-    --accent: #7d7fff;
-    --safe: #e9ecf7;
+  :root{
+    --bg:#0b0f1b;--panel:#12172b;--ink:#eef1ff;--muted:#a7add6;--brand:#7b7dff;
+    --ok:#2ecc71;--warn:#f1c40f;--danger:#e74c3c;
   }
-  * { box-sizing: border-box }
-  body {
-    margin: 0;
-    background: radial-gradient(1200px 600px at 70% -10%, #18203c, #0c0f1c 55%, #070a14 100%);
-    color: var(--text);
-    font-family: ui-sans-serif, Inter, Segoe UI, Roboto, Arial, sans-serif;
-  }
-  header {
-    display:flex; gap:16px; align-items:center; justify-content:center;
-    padding:14px 10px; background: #0a0d1a; position:sticky; top:0; z-index:10; border-bottom:1px solid #10142a;
-  }
-  header .title { font-weight:800; letter-spacing:.4px; }
-  .wrap {
-    display:grid; grid-template-columns: 1fr 380px; gap:16px; padding:16px; max-width:1400px; margin:0 auto;
-  }
-  #boardWrap {
-    background: #0b0f1f; border:1px solid #121733; border-radius:16px; padding:16px;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 20px 80px rgba(0,0,0,.35), inset 0 0 40px #0a0d1a;
-  }
-  #gameCanvas { background: #ffffff; border-radius:12px; width: min(92vw, 900px); height: auto; aspect-ratio: 1/1; image-rendering: crisp-edges; }
-  #side {
-    background: var(--panel); border:1px solid #202647; border-radius:16px; padding:16px;
-    display:flex; flex-direction:column; gap:14px;
-  }
-  .row { display:flex; align-items:center; gap:12px; flex-wrap: wrap; }
-  label { color: var(--muted); font-size:14px; }
-  select, button, input[type="checkbox"] {
-    background:#0e1330; color:var(--text); border:1px solid #2a3163; border-radius:12px; padding:10px 12px; font-size:14px;
-  }
-  button { cursor:pointer; transition: .2s transform, .2s opacity; }
-  button:hover { transform: translateY(-1px); }
-  button:disabled { opacity: .5; cursor:not-allowed; transform:none; }
-  .pill {
-    background:#0e1330; border:1px solid #222a56; border-radius:999px; padding:6px 10px; font-size:12px; color:#c6c9e6;
-  }
-  .status {
-    background:#0d1231; border:1px solid #262f67; border-radius:12px; padding:12px; line-height:1.35; font-size:14px;
-  }
-  .hint { color:#9aa2d0; font-size:12px; }
-  .legend { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-  .dot { width:14px; height:14px; border-radius:50%; display:inline-block; vertical-align:middle; margin-right:6px; border:1px solid rgba(0,0,0,.25)}
-  .c-red{ background:#e74c3c}
-  .c-blue{ background:#3498db}
-  .c-green{ background:#2ecc71}
-  .c-yellow{ background:#f1c40f}
-  .flex { display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-  .grow { flex:1 }
-  .k6 {
-    width:42px; height:42px; border-radius:8px; background:#fff; border:2px solid #111; display:grid; place-items:center; font-weight:800; color:#111;
-  }
-  .bar {
-    height:8px; background:#0f1440; border:1px solid #202762; border-radius:999px; overflow:hidden;
-  }
-  .bar > div { height:100%; background: linear-gradient(90deg, #6a74ff, #9c6bff); width:0% }
-  .sep { height:1px; background:#1a1f3f; margin:6px 0 }
-  footer { text-align:center; color:#8f95bd; font-size:12px; padding:8px 0 16px}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:
+    radial-gradient(1200px 600px at 70% -10%,#1a2141,#0b0f1b 56%,#070a14 100%);color:var(--ink)}
+  header{position:sticky;top:0;background:#0a0e1e;border-bottom:1px solid #111735;z-index:10}
+  .bar{max-width:1200px;margin:auto;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .title{font-weight:800;letter-spacing:.2px}
+  .pill{background:#0e1430;border:1px solid #20285b;color:#cfd3ff;border-radius:999px;padding:6px 10px;font-size:12px}
+  .wrap{max-width:1200px;margin:12px auto;padding:0 12px;display:grid;grid-template-columns:1fr 360px;gap:12px}
+  #stage{background:#0c1227;border:1px solid #1a2150;border-radius:16px;padding:10px;display:flex;justify-content:center;align-items:center}
+  canvas{width:min(92vw,820px);height:auto;aspect-ratio:1/1;background:#fff;border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.35)}
+  aside{background:var(--panel);border:1px solid #1a2150;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+  button,select,input[type=checkbox]{background:#0f1536;color:var(--ink);border:1px solid #273070;border-radius:12px;padding:10px 12px;font-size:14px}
+  button{cursor:pointer;transition:.15s transform,.15s opacity}
+  button:hover{transform:translateY(-1px)}
+  button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .grow{flex:1} .muted{color:var(--muted);font-size:12px}
+  .k6{width:46px;height:46px;border-radius:10px;background:#fff;border:2px solid #0a0a0a;display:grid;place-items:center;color:#0a0a0a;font-weight:800}
+  .status{background:#0f1739;border:1px solid #23307a;border-radius:12px;padding:10px;line-height:1.35;font-size:14px}
+  .dot{width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.2);vertical-align:middle;margin-right:6px}
+  .c-red{background:#e74c3c}.c-blue{background:#3498db}.c-green{background:#2ecc71}.c-yellow{background:#f1c40f}
+  .barline{height:8px;background:#0d1445;border:1px solid #253086;border-radius:999px;overflow:hidden}
+  .barline>div{height:100%;background:linear-gradient(90deg,#6c76ff,#9a6bff);width:0%}
+  .sep{height:1px;background:#1a2150;margin:4px 0}
+  footer{color:#8e94c3;text-align:center;padding:10px 0 20px;font-size:12px}
+  @media (max-width:980px){.wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-  <header>
-    <div class="title">🎲 Ludo Club — <strong>Mateusz Edition</strong></div>
-    <span class="pill">Offline • Jednoplikowe</span>
+<header>
+  <div class="bar">
+    <div class="title">🎲 Ludo Club — <b>Mateusz Edition</b></div>
+    <span class="pill">Jednoplikowo</span>
     <span class="pill">2–4 graczy</span>
-    <span class="pill">Kliknij pionek, żeby wykonać ruch</span>
-  </header>
+    <span class="pill">Kliknij pionek → ruch</span>
+  </div>
+</header>
 
-  <div class="wrap">
-    <div id="boardWrap">
-      <canvas id="gameCanvas" width="900" height="900"></canvas>
+<main class="wrap">
+  <section id="stage">
+    <canvas id="cv" width="900" height="900"></canvas>
+  </section>
+
+  <aside>
+    <div class="row">
+      <label>👥 Gracze</label>
+      <select id="players">
+        <option>2</option><option>3</option><option selected>4</option>
+      </select>
+      <button id="new">🔁 Nowa gra</button>
+      <button id="undo">↶ Cofnij</button>
+    </div>
+    <div class="row">
+      <button id="roll">🎲 Rzuć</button>
+      <div class="k6" id="die">–</div>
+      <label class="row" title="Dwa własne pionki mogą stać na jednym polu.">
+        <input type="checkbox" id="stack" checked> Wieże (stack)
+      </label>
+      <label class="row" title="Prosty przeciwnik sterowany przez AI (gra jako ostatni gracz).">
+        <input type="checkbox" id="bot"> Bot dla ostatniego
+      </label>
+      <label class="row" title="Włącz/wyłącz dźwięki.">
+        <input type="checkbox" id="sfx" checked> Dźwięki
+      </label>
     </div>
 
-    <aside id="side">
-      <div class="row">
-        <label>🧑‍🤝‍🧑 Liczba graczy</label>
-        <select id="playersSelect">
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4" selected>4</option>
-        </select>
-        <button id="restartBtn">🔁 Nowa gra</button>
-      </div>
+    <div class="status" id="status">
+      Tura: <b id="turn">Czerwony</b><br>
+      Rzut: <b id="rollInfo">–</b><br>
+      <span class="muted">Rzuć kostką, potem kliknij podświetlony pionek.</span>
+    </div>
 
-      <div class="row">
-        <button id="rollBtn">🎲 Rzuć kostką</button>
-        <div class="k6" id="dieFace">–</div>
-        <label class="flex" title="Jeśli włączone: 2 pionki tej samej drużyny mogą stać na jednym polu bez ryzyka bicia.">
-          <input type="checkbox" id="stacking" checked/> Zezwól na „wieże” (stack)
-        </label>
-      </div>
+    <div>
+      <div class="row"><b>Postęp (meta = 4 pionki)</b></div>
+      <div class="row"><span class="dot c-red"></span> Czerwony <div class="barline grow"><div id="pb0"></div></div></div>
+      <div class="row"><span class="dot c-blue"></span> Niebieski <div class="barline grow"><div id="pb1"></div></div></div>
+      <div class="row"><span class="dot c-green"></span> Zielony <div class="barline grow"><div id="pb2"></div></div></div>
+      <div class="row"><span class="dot c-yellow"></span> Żółty <div class="barline grow"><div id="pb3"></div></div></div>
+    </div>
 
-      <div class="status" id="statusBox">
-        Tura: <strong id="turnName">Czerwony</strong><br/>
-        Rzut: <strong id="rollInfo">–</strong><br/>
-        <span class="hint">Rzuć kością, a potem kliknij możliwy pionek (podświetlony).</span>
-      </div>
+    <div class="sep"></div>
+    <div class="muted">
+      Zasady: <br>• 6 = wyjście z bazy + dodatkowy rzut (jeśli wykonasz ruch).<br>
+      • Bicie wysyła wroga do bazy (bezpieczne pola są nietykalne).<br>
+      • Wejście do domu po minięciu własnego startu.
+    </div>
+  </aside>
+</main>
 
-      <div>
-        <div class="row"><strong>Postęp do zwycięstwa</strong></div>
-        <div class="row"><span class="dot c-red"></span> Czerwony <div class="bar grow"><div id="pbar0"></div></div></div>
-        <div class="row"><span class="dot c-blue"></span> Niebieski <div class="bar grow"><div id="pbar1"></div></div></div>
-        <div class="row"><span class="dot c-green"></span> Zielony <div class="bar grow"><div id="pbar2"></div></div></div>
-        <div class="row"><span class="dot c-yellow"></span> Żółty <div class="bar grow"><div id="pbar3"></div></div></div>
-      </div>
-
-      <div class="sep"></div>
-      <div>
-        <strong>Legenda</strong>
-        <div class="legend">
-          <div><span class="dot" style="background:#fff;border:1px solid #ccc"></span> Pole zwykłe</div>
-          <div><span class="dot" style="background:var(--safe)"></span> Pole bezpieczne</div>
-          <div><span class="dot c-red"></span> Start czerwony</div>
-          <div><span class="dot c-blue"></span> Start niebieski</div>
-          <div><span class="dot c-green"></span> Start zielony</div>
-          <div><span class="dot c-yellow"></span> Start żółty</div>
-        </div>
-      </div>
-    </aside>
-  </div>
-
-  <footer>Made with ❤️ for Mateusz • Zasady: 6 = wyjście na start + dodatkowy rzut; bicie wysyła przeciwnika do bazy; bezpieczne pola są nietykalne.</footer>
+<footer>Made for Mateusz | Auto-save, UNDO, Bot (opcjonalnie), dźwięki, mobile-friendly.</footer>
 
 <script>
-/** =========================
- *   LUDO – Mateusz Edition
- *   Jednoplikowa implementacja
- *   Autor: ChatGPT (dla Mateusza)
- * ==========================*/
-
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
+const CV = document.getElementById('cv');
+const CTX = CV.getContext('2d');
 const UI = {
-  rollBtn: document.getElementById('rollBtn'),
-  dieFace: document.getElementById('dieFace'),
-  statusBox: document.getElementById('statusBox'),
-  turnName: document.getElementById('turnName'),
-  rollInfo: document.getElementById('rollInfo'),
-  playersSelect: document.getElementById('playersSelect'),
-  restartBtn: document.getElementById('restartBtn'),
-  stacking: document.getElementById('stacking'),
-  pbars: [
-    document.getElementById('pbar0'),
-    document.getElementById('pbar1'),
-    document.getElementById('pbar2'),
-    document.getElementById('pbar3'),
-  ]
+  players: document.getElementById('players'),
+  new:     document.getElementById('new'),
+  undo:    document.getElementById('undo'),
+  roll:    document.getElementById('roll'),
+  die:     document.getElementById('die'),
+  status:  document.getElementById('status'),
+  turn:    document.getElementById('turn'),
+  rollInfo:document.getElementById('rollInfo'),
+  pbars:   [0,1,2,3].map(i=>document.getElementById('pb'+i)),
+  stack:   document.getElementById('stack'),
+  bot:     document.getElementById('bot'),
+  sfx:     document.getElementById('sfx'),
 };
+const COLORS = ['#e74c3c','#3498db','#2ecc71','#f1c40f'];
+const NAMES  = ['Czerwony','Niebieski','Zielony','Żółty'];
+const RING_COUNT = 52;
+const TOKENS_PER = 4;
+const HOME_LEN   = 6;
+const START_AT   = [0,13,26,39];
+const SAFE_EXTRA = [8,21,34,47];
+const SAFE_SET   = new Set([...START_AT,...SAFE_EXTRA]);
 
-// Kolory drużyn
-const COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f'];
-const COLOR_NAMES = ['Czerwony', 'Niebieski', 'Zielony', 'Żółty'];
+const W = CV.width, H = CV.height;
+const CX = W/2, CY = H/2;
+const R_OUT = Math.min(W,H)*0.39;
+const R_IN  = Math.min(W,H)*0.31;
+const RING_POS = (()=>{
+  const pts=[]; const startAngle = Math.PI*1.25;
+  for (let i=0;i<RING_COUNT;i++){
+    const a = startAngle - i*(2*Math.PI/RING_COUNT);
+    const r = R_OUT;
+    pts.push([CX + r*Math.cos(a), CY + r*Math.sin(a)]);
+  } return pts;
+})();
+const HOME_POS = [0,1,2,3].map(p=>{
+  const [sx,sy] = RING_POS[START_AT[p]];
+  const vx = CX - sx, vy = CY - sy;
+  const steps=[];
+  for (let i=1;i<=HOME_LEN;i++){
+    const t = i/(HOME_LEN+1);
+    const x = sx + vx*t, y = sy + vy*t;
+    steps.push([x,y]);
+  } return steps;
+});
+const BASE_POS = (()=>{
+  const rad = Math.min(W,H)*0.26, offs=[[-1,-1],[+1,-1],[-1,+1],[+1,+1]];
+  return [0,1,2,3].map(p=>{
+    const a = (Math.PI/4) + p*(Math.PI/2);
+    const bx = CX + rad*Math.cos(a), by = CY + rad*Math.sin(a);
+    const arr=[]; for (let i=0;i<4;i++) arr.push([bx + offs[i][0]*22, by + offs[i][1]*22]);
+    return arr;
+  });
+})();
 
-// Ustawienia planszy (układ ścieżki – 52 pola główne + 6 domowych na gracza)
-const GRID = 15;
-const CS = canvas.width / GRID; // cell size
-
-// Współrzędne głównego pierścienia 52 pól (id 0..51):
-// Budujemy „ramkę” dookoła (bez narożnych duplikatów), zgodną z ruchem zgodnie z ruchem wskazówek zegara.
-function ringPath() {
-  const pts = [];
-  const min = 1, max = GRID - 2; // 13
-  // top row left->right
-  for (let x=min; x<=max; x++) pts.push([x, min]);
-  // right col top->bottom
-  for (let y=min+1; y<=max; y++) pts.push([max, y]);
-  // bottom row right->left
-  for (let x=max-1; x>=min; x--) pts.push([x, max]);
-  // left col bottom->top
-  for (let y=max-1; y>min; y--) pts.push([min, y]);
-  // To da  (max-min+1)*4 - 4  = 13*4 - 4 = 48 – dorobimy jeszcze 4 „wypustki”, żeby było 52.
-  // Dodajmy po jednym polu w połowie każdej krawędzi w kierunku środka:
-  pts.splice(13, 0, [max-1, min+1]);     // górna wypustka
-  pts.splice(26+1, 0, [max-1, max-1]);   // prawa wypustka
-  pts.splice(39+2, 0, [min+1, max-1]);   // dolna wypustka
-  pts.splice(52, 0, [min+1, min+1]);     // lewa wypustka (końcowy push na koniec)
-  // Jeśli wypadło >52, przytnijmy
-  return pts.slice(0,52);
-}
-const RING = ringPath();
-
-// „Start” każdego gracza – indeks na pierścieniu
-// Ustalamy: Red=0 (top-lewa), Blue=13 (top-right), Green=26 (bottom-right), Yellow=39 (bottom-left)
-const START_INDEX = [0, 13, 26, 39];
-
-// Bezpieczne pola (zwykle to starty i kilka stałych)
-const SAFE_INDICES = new Set([...START_INDEX, 8, 21, 34, 47]); // 5 „krzyżowych” + starty
-
-// Ścieżka domowa (6 pól) dla każdego gracza – wzdłuż „promienia” do centrum
-// Bierzemy punkt startowy i idziemy w stronę środka; kończymy w centrum.
-function homePathFor(player) {
-  const [sx, sy] = RING[START_INDEX[player]];
-  // kierunek do środka
-  const cx = Math.floor(GRID/2), cy = Math.floor(GRID/2);
-  const dx = Math.sign(cx - sx), dy = Math.sign(cy - sy);
-  const arr = [];
-  // 6 pół do „domu” (ostatnie to meta)
-  let x = sx, y = sy;
-  for (let i=1; i<=6; i++) {
-    x += dx; y += dy;
-    arr.push([x, y]);
-  }
-  return arr;
-}
-const HOME_PATHS = [0,1,2,3].map(homePathFor);
-
-// Bazy (4 pola) – gdzie stoją pionki na starcie przed wyjściem
-const BASE_CELLS = [
-  // RED (lewy górny kwadrat 3x3)
-  [[2,2],[3,2],[2,3],[3,3]],
-  // BLUE (prawy górny)
-  [[GRID-3,2],[GRID-4,2],[GRID-3,3],[GRID-4,3]],
-  // GREEN (lewy dolny)
-  [[2,GRID-3],[3,GRID-3],[2,GRID-4],[3,GRID-4]],
-  // YELLOW (prawy dolny)
-  [[GRID-3,GRID-3],[GRID-4,GRID-3],[GRID-3,GRID-4],[GRID-4,GRID-4]],
-];
-
-const TOKENS_PER_PLAYER = 4;
-
-// Stan gry
-let state = null;
-
-// Inicjalizacja nowej gry
-function newGame(playersCount = 4) {
-  state = {
-    playersCount,
-    current: 0,         // indeks gracza
-    die: null,          // wynik rzutu
-    rolled: false,      // czy rzucono w tej turze
-    extraTurn: false,   // czy kolejny rzut za „6”
-    winner: null,
-    stackingAllowed: UI.stacking.checked,
-    tokens: [],         // {player, posType:'base'|'ring'|'home', ringIndex, homeIndex, baseSlot}
+let S=null, HISTORY=[];
+const SFX = {
+  roll: mkBeep(220, 0.07),
+  hit : mkBeep(520, 0.06),
+  step: mkBeep(360, 0.03),
+  win : mkBeep(660, 0.25)
+};
+function mkBeep(freq=440, dur=0.1){
+  const ctx = new (window.AudioContext||window.webkitAudioContext)();
+  return ()=>{
+    if(!UI.sfx.checked) return;
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type='triangle'; o.frequency.value=freq;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.value=0.001; const t0=ctx.currentTime;
+    g.gain.exponentialRampToValueAtTime(0.2, t0+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+    o.start(); o.stop(t0+dur+0.01);
   };
-  for (let p=0; p<playersCount; p++) {
-    for (let i=0; i<TOKENS_PER_PLAYER; i++) {
-      state.tokens.push({
-        player: p,
-        posType: 'base',
-        ringIndex: null,
-        homeIndex: null,
-        baseSlot: i
-      });
-    }
-  }
-  UI.dieFace.textContent = '–';
-  UI.rollInfo.textContent = '–';
-  UI.turnName.textContent = COLOR_NAMES[state.current];
-  draw();
-  updateProgressBars();
 }
 
-// Rzut kostką
-function rollDie() {
-  if (state.winner != null) return;
-  if (state.rolled) return;
-  const n = Math.floor(Math.random()*6)+1;
-  state.die = n;
-  state.rolled = true;
-  UI.dieFace.textContent = n;
-  UI.rollInfo.textContent = n;
-  // Auto-podpowiedź: jeśli brak ruchów – przechodzimy turę (po krótkim flashu)
-  const moves = legalMovesFor(state.current, n);
-  if (moves.length === 0) {
-    flashStatus(`Brak legalnych ruchów dla gracza ${COLOR_NAMES[state.current]}.`);
-    setTimeout(nextTurn, 700);
-  } else {
-    flashStatus(`Wybierz pionek do ruchu (${COLOR_NAMES[state.current]}).`);
-  }
-  draw();
+function newGame(nPlayers=4){
+  S={ nPlayers, current:0, die:null, rolled:false, winner:null, stack:UI.stack.checked, tokens:[] };
+  for (let p=0;p<nPlayers;p++) for (let i=0;i<TOKENS_PER;i++) S.tokens.push({player:p,pos:'base',ring:null,home:null,base:i});
+  HISTORY=[]; syncUI(); draw(); save();
 }
-
-// Sprawdź ruchy legalne dla danego gracza i wyniku
-function legalMovesFor(player, die) {
-  const res = [];
-  const startIdx = START_INDEX[player];
-
-  for (let i=0; i<state.tokens.length; i++) {
-    const t = state.tokens[i];
-    if (t.player !== player) continue;
-
-    if (t.posType === 'base') {
-      // Wyjście tylko na 6
-      if (die === 6) {
-        const targetRing = startIdx;
-        // Sprawdź czy pole startowe dostępne (stacking? bicie?)
-        if (canLandOnRing(player, targetRing)) {
-          res.push({tokenIndex:i, type:'enter', toRingIndex: targetRing});
-        }
-      }
-    } else if (t.posType === 'ring') {
-      const newRing = (t.ringIndex + die) % RING.length;
-      // Sprawdź, czy przekraczamy start -> wchodzimy do home?
-      // Logika: jeśli przechodzimy przez własny start i mamy nadmiar, wchodzimy w ścieżkę domową.
-      const stepsToStart = ( (START_INDEX[player] - t.ringIndex - 1 + RING.length) % RING.length ) + 1;
-      if (die > stepsToStart) {
-        // liczba kroków po starcie do home
-        const inHomeSteps = die - stepsToStart - 1; // -1 bo pole „za startem” to 0 w home
-        if (inHomeSteps <= 5) { // homeIndex 0..5
-          // Lądowanie w home
-          if (canLandInHome(player, inHomeSteps)) {
-            res.push({tokenIndex:i, type:'tohome', toHomeIndex: inHomeSteps});
-          }
-        }
+function syncUI(){
+  UI.turn.textContent = NAMES[S.current];
+  UI.rollInfo.textContent = S.die ?? '–';
+  UI.die.textContent = S.die ?? '–';
+  for (let p=0;p<4;p++){
+    const bar=UI.pbars[p]; if(!bar) continue;
+    let inGoal=0; for (const t of S.tokens) if (t.player===p && t.pos==='home' && t.home===5) inGoal++;
+    bar.style.width = (inGoal/TOKENS_PER)*100 + '%';
+  }
+}
+function roll(){
+  if (S.winner!=null || S.rolled) return;
+  diceAnim().then(n=>{
+    S.die=n; S.rolled=true; syncUI();
+    if (legalMovesFor(S.current,n).length===0){ flash(`Brak ruchów dla ${NAMES[S.current]}.`); setTimeout(nextTurn,700); }
+    else { flash(`Wybierz pionek (${NAMES[S.current]}).`); maybeBot(); }
+    draw(); save();
+  });
+}
+function legalMovesFor(player, die){
+  const L=[]; const start=START_AT[player];
+  for (let i=0;i<S.tokens.length;i++){
+    const t=S.tokens[i]; if (t.player!==player) continue;
+    if (t.pos==='base'){ if (die===6 && canLandRing(player,start)) L.push({i,kind:'enter',to:start}); }
+    else if (t.pos==='ring'){
+      const stepsToStart=((start - t.ring - 1 + RING_COUNT) % RING_COUNT) + 1;
+      if (die>stepsToStart){
+        const h = die - stepsToStart - 1; if (h<=5 && canLandHome(player,h)) L.push({i,kind:'tohome',to:h});
       } else {
-        // Normalne przesunięcie po pierścieniu
-        if (canLandOnRing(player, newRing)) {
-          res.push({tokenIndex:i, type:'move', toRingIndex: newRing});
-        }
+        const to=(t.ring+die)%RING_COUNT; if (canLandRing(player,to)) L.push({i,kind:'ring',to});
       }
-    } else if (t.posType === 'home') {
-      // Poruszanie w domu – tylko jeśli nie wyjdziemy poza meta
-      const target = t.homeIndex + die;
-      if (target <= 5 && canLandInHome(player, target)) {
-        res.push({tokenIndex:i, type:'homeMove', toHomeIndex: target});
-      }
+    } else if (t.pos==='home'){
+      const to=t.home+die; if (to<=5 && canLandHome(player,to)) L.push({i,kind:'home',to});
     }
-  }
-  return res;
+  } return L;
 }
-
-// Czy możemy stanąć na polu ringowym (uwzględniając bicie i stackowanie)
-function canLandOnRing(player, ringIndex) {
-  const occupants = tokensOnRing(ringIndex);
-  if (occupants.length === 0) return true;
-  // jeśli zajęte przez naszych:
-  const sameTeam = occupants.every(ti => state.tokens[ti].player === player);
-  if (sameTeam) {
-    return state.stackingAllowed; // jeśli stack dozwolony – ok, inaczej blok
-  }
-  // zajęte przez przeciwnika – czy to bezpieczne?
-  if (SAFE_INDICES.has(ringIndex)) return false;
-  // bicie dozwolone
+function tokensOnRing(idx){ const out=[]; for (let i=0;i<S.tokens.length;i++){ const t=S.tokens[i]; if (t.pos==='ring' && t.ring===idx) out.push(i);} return out;}
+function tokensInHome(player,h){ const out=[]; for (let i=0;i<S.tokens.length;i++){ const t=S.tokens[i]; if (t.player===player && t.pos==='home' && t.home===h) out.push(i);} return out;}
+function canLandRing(player,idx){
+  const occ=tokensOnRing(idx); if (!occ.length) return true;
+  const same=occ.every(i=>S.tokens[i].player===player);
+  if (same) return S.stack;
+  if (SAFE_SET.has(idx)) return false;
   return true;
 }
+function canLandHome(player,h){ return tokensInHome(player,h).length===0; }
 
-function canLandInHome(player, homeIndex) {
-  // Jeżeli w home już stoi nasz pionek na tym indeksie – blok
-  const occ = tokensInHome(player, homeIndex);
-  return occ.length === 0;
-}
-
-function tokensOnRing(ringIndex) {
-  const out = [];
-  for (let i=0; i<state.tokens.length; i++) {
-    const t = state.tokens[i];
-    if (t.posType === 'ring' && t.ringIndex === ringIndex) out.push(i);
+async function perform(move){
+  if (S.winner!=null) return; pushHistory();
+  const t=S.tokens[move.i];
+  if (move.kind==='enter'){ await animateMove(()=>setTokenRing(t,START_AT[t.player])); }
+  else if (move.kind==='ring'){
+    const steps=(move.to - t.ring + RING_COUNT) % RING_COUNT || RING_COUNT;
+    await animateAdvanceRing(t,steps); t.ring=move.to;
+  } else if (move.kind==='tohome'){
+    const start=START_AT[t.player];
+    const stepsToStart=((start - t.ring - 1 + RING_COUNT) % RING_COUNT) + 1;
+    await animateAdvanceRing(t,stepsToStart);
+    await animateEnterHome(t,move.to); t.pos='home'; t.ring=null; t.home=move.to;
+  } else if (move.kind==='home'){
+    await animateAdvanceHome(t,t.home,move.to); t.home=move.to;
   }
-  return out;
-}
-function tokensInHome(player, homeIndex) {
-  const out = [];
-  for (let i=0; i<state.tokens.length; i++) {
-    const t = state.tokens[i];
-    if (t.player === player && t.posType === 'home' && t.homeIndex === homeIndex) out.push(i);
+  if (t.pos==='ring' && !SAFE_SET.has(t.ring)){
+    const occ=tokensOnRing(t.ring).filter(i=>S.tokens[i].player!==t.player);
+    if (occ.length){ SFX.hit(); for (const i of occ) sendToBase(S.tokens[i]); flash(`💥 ${NAMES[t.player]} bije przeciwnika!`); }
   }
-  return out;
+  if (checkWin(t.player)){ S.winner=t.player; SFX.win(); flash(`🏆 Wygrywa ${NAMES[t.player]}!`); }
+  const wasSix=(S.die===6); S.die=null; S.rolled=false;
+  if (wasSix && S.winner==null) flash(`${NAMES[S.current]} ma dodatkowy rzut za „6”.`);
+  else nextTurn();
+  syncUI(); draw(); save();
 }
-
-// Wykonaj ruch (z animacją)
-let animating = false;
-
-async function performMove(move) {
-  if (animating || state.winner != null) return;
-  animating = true;
-
-  const t = state.tokens[move.tokenIndex];
-  const die = state.die;
-
-  if (move.type === 'enter') {
-    // wjazd ze stanu base na start
-    await animateBaseToRing(move.tokenIndex, START_INDEX[t.player]);
-    t.posType = 'ring';
-    t.ringIndex = START_INDEX[t.player];
-    t.homeIndex = null;
-    // bicie na starcie (jeśli przeciwnik stoi i pole nie jest safe – ale start jest safe, więc nie bijemy)
-  } else if (move.type === 'move') {
-    await animateRingAdvance(move.tokenIndex, die);
-    t.ringIndex = move.toRingIndex;
-  } else if (move.type === 'tohome') {
-    // przeskok przez start – do homeIndex
-    // animuj do startu, a potem „do środka”
-    const stepsToStart = ( (START_INDEX[t.player] - t.ringIndex - 1 + RING.length) % RING.length ) + 1;
-    if (stepsToStart>0) await animateRingAdvance(move.tokenIndex, stepsToStart);
-    await animateEnterHome(move.tokenIndex, move.toHomeIndex);
-    t.posType = 'home';
-    t.ringIndex = null;
-    t.homeIndex = move.toHomeIndex;
-  } else if (move.type === 'homeMove') {
-    await animateHomeAdvance(move.tokenIndex, t.homeIndex, move.toHomeIndex);
-    t.homeIndex = move.toHomeIndex;
-  }
-
-  // Bic-ie na polu ringowym (jeśli lądujemy na przeciwniku i nie jest to bezpieczne)
-  if (t.posType === 'ring') {
-    const occ = tokensOnRing(t.ringIndex);
-    const enemies = occ.filter(i => state.tokens[i].player !== t.player);
-    if (enemies.length > 0 && !SAFE_INDICES.has(t.ringIndex)) {
-      // Wybij wszystkich przeciwników z tego pola
-      for (const ei of enemies) {
-        sendTokenToBase(ei);
-      }
-      flashStatus(`💥 ${COLOR_NAMES[t.player]} bije przeciwnika na polu!`);
-    }
-  }
-
-  // Sprawdź zwycięstwo (wszystkie 4 pionki w homeIndex=5)
-  if (checkWin(t.player)) {
-    state.winner = t.player;
-    flashStatus(`🏆 Wygrywa ${COLOR_NAMES[t.player]}!`);
-  }
-
-  // Kolej tury
-  const wasSix = (state.die === 6);
-  state.die = null;
-  state.rolled = false;
-
-  if (wasSix && state.winner == null) {
-    flashStatus(`${COLOR_NAMES[state.current]} ma dodatkowy rzut za „6”.`);
-    // nie zmieniamy current
-  } else {
-    nextTurn();
-  }
-
-  updateProgressBars();
-  animating = false;
-  draw();
+function checkWin(p){ let n=0; for (const t of S.tokens) if (t.player===p && t.pos==='home' && t.home===5) n++; return n===TOKENS_PER; }
+function nextTurn(){ S.current=(S.current+1)%S.nPlayers; syncUI(); }
+function sendToBase(t){
+  const used=new Set(S.tokens.filter(x=>x.player===t.player && x.pos==='base').map(x=>x.base));
+  let slot=0; while(used.has(slot)&&slot<4) slot++; t.pos='base'; t.ring=null; t.home=null; t.base=slot%4;
 }
-
-function checkWin(player) {
-  let ok = 0;
-  for (const t of state.tokens) {
-    if (t.player===player && t.posType==='home' && t.homeIndex===5) ok++;
-  }
-  return ok === TOKENS_PER_PLAYER;
-}
-
-function sendTokenToBase(tokenIndex) {
-  const t = state.tokens[tokenIndex];
-  // przenieś do pierwszego wolnego slotu bazy
-  const used = new Set(
-    state.tokens.filter(x=>x.player===t.player && x.posType==='base').map(x=>x.baseSlot)
-  );
-  let slot = 0;
-  while (used.has(slot) && slot<4) slot++;
-  t.posType = 'base';
-  t.ringIndex = null;
-  t.homeIndex = null;
-  t.baseSlot = slot%4;
-}
-
-function nextTurn() {
-  if (state.winner!=null) return;
-  state.current = (state.current + 1) % state.playersCount;
-  UI.turnName.textContent = COLOR_NAMES[state.current];
-  UI.rollInfo.textContent = '–';
-  UI.dieFace.textContent = '–';
-}
-
-// Animacje (proste, interpolowane pozycje)
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-async function animateBaseToRing(tokenIndex, ringIndex) {
-  await animateTokenJump(tokenIndex, getTokenPixelPosFromState(tokenIndex), cellCenter(RING[ringIndex]));
-}
-
-async function animateRingAdvance(tokenIndex, steps) {
-  const t = state.tokens[tokenIndex];
-  for (let s=0; s<steps; s++) {
-    const next = (t.ringIndex + 1) % RING.length;
-    await animateTokenJump(tokenIndex, cellCenter(RING[t.ringIndex]), cellCenter(RING[next]));
-    t.ringIndex = next;
-    draw(); await sleep(60);
+async function diceAnim(){ SFX.roll(); let last=1; for (let i=0;i<12;i++){ last=1+Math.floor(Math.random()*6); UI.die.textContent=last; await sleep(50+i*12);} return last; }
+async function animateAdvanceRing(token,steps){
+  for (let s=0;s<steps;s++){
+    const from=getTokenPos(token);
+    token.ring = (token.ring==null?START_AT[token.player]: (token.ring+1)%RING_COUNT);
+    token.pos='ring'; const to=getTokenPos(token);
+    await animateGhost(from,to,9,10); SFX.step();
   }
 }
-
-async function animateEnterHome(tokenIndex, toHomeIndex) {
-  const t = state.tokens[tokenIndex];
-  const path = HOME_PATHS[t.player];
-  // pierwszy indeks home to 0
-  await animateTokenJump(tokenIndex, cellCenter(RING[START_INDEX[t.player]]), cellCenter(path[0]));
-  for (let i=1;i<=toHomeIndex;i++){
-    await animateTokenJump(tokenIndex, cellCenter(path[i-1]), cellCenter(path[i]));
-    draw(); await sleep(60);
+async function animateEnterHome(token,toHome){
+  const startPos=[...RING_POS[START_AT[token.player]]];
+  token.pos='home'; token.ring=null; token.home=0;
+  await animateGhost(startPos, HOME_POS[token.player][0], 9, 10);
+  for (let i=1;i<=toHome;i++){
+    const from=HOME_POS[token.player][i-1], to=HOME_POS[token.player][i];
+    await animateGhost(from,to,9,10); SFX.step();
   }
 }
-
-async function animateHomeAdvance(tokenIndex, from, to) {
-  const t = state.tokens[tokenIndex];
-  const p = HOME_PATHS[t.player];
-  for (let i=from+1; i<=to; i++) {
-    await animateTokenJump(tokenIndex, cellCenter(p[i-1]), cellCenter(p[i]));
-    draw(); await sleep(60);
+async function animateAdvanceHome(token,from,to){
+  for (let i=from+1;i<=to;i++){
+    await animateGhost(HOME_POS[token.player][i-1], HOME_POS[token.player][i], 9, 10); SFX.step();
   }
 }
-
-// Skokowa interpolacja (bez trajektorii łukowej – lekki podskok przez cień)
-async function animateTokenJump(tokenIndex, fromPix, toPix) {
-  const steps = 10;
-  for (let i=1; i<=steps; i++) {
-    const k = i/steps;
-    const x = fromPix[0] + (toPix[0]-fromPix[0])*k;
-    const y = fromPix[1] + (toPix[1]-fromPix[1])*k;
-    draw({ghostToken: {tokenIndex, x, y}});
-    await sleep(10);
-  }
+async function animateMove(mut){ const before=getTokenPosPreview(); mut(); const after=getTokenPosPreview(); await animateGhost(before,after,10,12); }
+function getTokenPos(t){ if (t.pos==='ring') return RING_POS[t.ring]; if (t.pos==='home') return HOME_POS[t.player][t.home]; if (t.pos==='base') return BASE_POS[t.player][t.base]; }
+function getTokenPosPreview(){ const pts=[]; for (const t of S.tokens) pts.push(getTokenPos(t)); return pts[0]; }
+async function animateGhost(from,to,steps=8,ms=12){
+  for (let i=1;i<=steps;i++){ const k=i/steps; const x=from[0]+(to[0]-from[0])*k; const y=from[1]+(to[1]-from[1])*k; draw({ghost:{x,y}}); await sleep(ms); }
 }
-
-// Pozycje pikselowe
-function cellCenter([gx,gy]) {
-  return [gx*CS + CS/2, gy*CS + CS/2];
-}
-function baseCellCenter(player, baseSlot) {
-  const [gx,gy] = BASE_CELLS[player][baseSlot];
-  return cellCenter([gx,gy]);
-}
-function getTokenPixelPosFromState(i) {
-  const t = state.tokens[i];
-  if (t.posType === 'base') return baseCellCenter(t.player, t.baseSlot);
-  if (t.posType === 'ring') return cellCenter(RING[t.ringIndex]);
-  if (t.posType === 'home') return cellCenter(HOME_PATHS[t.player][t.homeIndex]);
-}
-
-// Rysowanie planszy
-function draw(opts={}) {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // Siatka
-  ctx.save();
-  ctx.strokeStyle = '#d7daee';
-  ctx.lineWidth = 1;
-  for (let i=0;i<GRID;i++) {
-    // ramka
-    ctx.strokeRect(i*CS, 0, CS, canvas.height);
-    ctx.strokeRect(0, i*CS, canvas.width, CS);
+function draw(opt={}){
+  CTX.clearRect(0,0,W,H);
+  CTX.save(); CTX.globalAlpha=0.08; CTX.fillStyle='#6f77ff';
+  CTX.beginPath(); CTX.arc(CX,CY, R_OUT+30,0,Math.PI*2); CTX.fill();
+  CTX.globalAlpha=0.06; CTX.beginPath(); CTX.arc(CX,CY, R_IN-18,0,Math.PI*2); CTX.fill(); CTX.restore();
+  for (let i=0;i<RING_COUNT;i++){ const [x,y]=RING_POS[i]; const safe=SAFE_SET.has(i); drawCell(x,y, safe? '#eef2ff':'#ffffff', safe? '#c9d2ff':'#cfcfcf'); }
+  for (let p=0;p<S.nPlayers;p++) for (let h=0;h<HOME_LEN;h++){ const [x,y]=HOME_POS[p][h]; const goal=(h===HOME_LEN-1); drawCell(x,y, goal? lighten(COLORS[p],.75):'#f8f9ff', '#b9c3ea'); }
+  for (let p=0;p<S.nPlayers;p++) for (let b=0;b<4;b++){ const [x,y]=BASE_POS[p][b]; drawCell(x,y,'#f7f8ff','#b9c0ea',12); CTX.save(); CTX.globalAlpha=.20; CTX.fillStyle=lighten(COLORS[p],.2); CTX.beginPath(); CTX.arc(x,y,14,0,Math.PI*2); CTX.fill(); CTX.restore(); }
+  if (S.rolled && S.winner==null){
+    const L=legalMovesFor(S.current,S.die); const set=new Set(L.map(m=>m.i));
+    for (const i of set){ const t=S.tokens[i]; const [x,y]=getTokenPos(t); CTX.strokeStyle='#7d7fff'; CTX.lineWidth=4; CTX.beginPath(); CTX.arc(x,y,20,0,Math.PI*2); CTX.stroke(); }
   }
-  ctx.restore();
-
-  // Pola pierścienia
-  for (let i=0; i<RING.length; i++) {
-    const [gx,gy] = RING[i];
-    const x = gx*CS, y = gy*CS;
-    ctx.fillStyle = SAFE_INDICES.has(i) ? '#eef2ff' : '#ffffff';
-    ctx.strokeStyle = '#999';
-    roundRect(ctx, x+2, y+2, CS-4, CS-4, 6, true, true);
-    if (SAFE_INDICES.has(i)) {
-      ctx.fillStyle = '#cfd7ff';
-      ctx.globalAlpha = .25;
-      ctx.beginPath(); ctx.arc(x+CS/2,y+CS/2, CS*.25, 0, Math.PI*2); ctx.fill();
-      ctx.globalAlpha = 1;
-    }
+  const ghost=opt.ghost;
+  for (let i=0;i<S.tokens.length;i++){
+    const t=S.tokens[i]; if (t.player>=S.nPlayers) continue;
+    let [x,y]=getTokenPos(t);
+    if (ghost && i===selectNearestTokenIndex(ghost.x,ghost.y,S.current)) { x=ghost.x; y=ghost.y; }
+    const stack=stackedHere(t); const idx=stack.indexOf(i); const lift=-6*idx;
+    drawPawn(x,y+lift,COLORS[t.player]);
   }
-
-  // Pola domowe
-  for (let p=0;p<state.playersCount;p++) {
-    for (let h=0; h<6; h++) {
-      const [gx,gy] = HOME_PATHS[p][h];
-      const x = gx*CS, y = gy*CS;
-      ctx.fillStyle = h===5? shade(COLORS[p], 0.2) : '#f8f9ff';
-      ctx.strokeStyle = '#8892c0';
-      roundRect(ctx, x+2, y+2, CS-4, CS-4, 6, true, true);
-    }
-  }
-
-  // Bazy (4 pola)
-  for (let p=0;p<state.playersCount;p++) {
-    for (let s=0;s<4;s++) {
-      const [gx,gy] = BASE_CELLS[p][s];
-      const x = gx*CS, y = gy*CS;
-      ctx.fillStyle = '#f7f8ff';
-      ctx.strokeStyle = '#b9c0ea';
-      roundRect(ctx, x+2, y+2, CS-4, CS-4, 10, true, true);
-      // akcent koloru gracza
-      ctx.fillStyle = shade(COLORS[p], .1);
-      ctx.globalAlpha = .25;
-      ctx.beginPath();
-      ctx.arc(x+CS/2, y+CS/2, CS*.28, 0, Math.PI*2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-  }
-
-  // Startowe pola – podmaluj kolorem gracza
-  for (let p=0;p<state.playersCount;p++) {
-    const [gx,gy] = RING[START_INDEX[p]];
-    const x = gx*CS, y = gy*CS;
-    ctx.fillStyle = shade(COLORS[p], .2);
-    ctx.globalAlpha = .3;
-    roundRect(ctx, x+2, y+2, CS-4, CS-4, 8, true, false);
-    ctx.globalAlpha = 1;
-  }
-
-  // Podświetlenie możliwych ruchów (jeśli rzut wykonany)
-  if (state.rolled && state.winner==null) {
-    const moves = legalMovesFor(state.current, state.die);
-    const tokenSet = new Set(moves.map(m=>m.tokenIndex));
-    for (const ti of tokenSet) {
-      const [x,y] = getTokenPixelPosFromState(ti);
-      ctx.strokeStyle = '#7d7fff';
-      ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.arc(x, y, CS*.28, 0, Math.PI*2); ctx.stroke();
-    }
-  }
-
-  // Pionki
-  // Jeśli jest animacja „ghostToken” – ten pionek rysujemy w pozycji duchowej
-  const ghost = opts.ghostToken;
-  for (let i=0;i<state.tokens.length;i++) {
-    const t = state.tokens[i];
-    if (t.player >= state.playersCount) continue;
-    let [x,y] = getTokenPixelPosFromState(i);
-    let alpha = 1;
-    if (ghost && ghost.tokenIndex === i) { x = ghost.x; y = ghost.y; alpha = .9; }
-
-    // offset przy stacku – ułóż „wieżę”
-    const stack = stackedIndicesAt(t);
-    const idxInStack = stack.indexOf(i);
-    const offsetY = idxInStack * -6;
-
-    drawPawn(x, y+offsetY, COLORS[t.player], i);
-  }
-
-  // Meta – środek (tylko kosmetyka)
-  ctx.save();
-  const cx = canvas.width/2, cy = canvas.height/2;
-  ctx.globalAlpha = .1;
-  ctx.fillStyle = '#6f77ff';
-  ctx.beginPath(); ctx.arc(cx, cy, CS*1.6, 0, Math.PI*2); ctx.fill();
-  ctx.restore();
+  CTX.save(); CTX.globalAlpha=.08; CTX.fillStyle='#7b7dff';
+  CTX.beginPath(); CTX.arc(CX,CY,44,0,Math.PI*2); CTX.fill(); CTX.restore();
 }
-
-function stackedIndicesAt(tkn) {
-  const t = tkn;
-  if (t.posType==='ring') {
-    return state.tokens
-      .map((tt, i)=>({tt,i}))
-      .filter(o=>o.tt.posType==='ring' && o.tt.ringIndex===t.ringIndex && o.tt.player===t.player)
-      .map(o=>o.i);
-  } else if (t.posType==='home') {
-    return state.tokens
-      .map((tt, i)=>({tt,i}))
-      .filter(o=>o.tt.posType==='home' && o.tt.homeIndex===t.homeIndex && o.tt.player===t.player)
-      .map(o=>o.i);
-  } else if (t.posType==='base') {
-    return state.tokens
-      .map((tt, i)=>({tt,i}))
-      .filter(o=>o.tt.posType==='base' && o.tt.baseSlot===t.baseSlot && o.tt.player===t.player)
-      .map(o=>o.i);
-  }
-  return [ ];
+function drawCell(x,y,fill,stroke,r=10){ CTX.save(); CTX.fillStyle=fill; CTX.strokeStyle=stroke; CTX.lineWidth=1.5; roundRect(x-18,y-18,36,36,r,true,true); CTX.restore(); }
+function drawPawn(x,y,color){
+  CTX.save(); CTX.fillStyle='rgba(0,0,0,.2)'; CTX.beginPath(); CTX.ellipse(x,y+10,16,7,0,0,Math.PI*2); CTX.fill(); CTX.restore();
+  const r=16; const grd=CTX.createRadialGradient(x-r/2,y-r/2,r*.2,x,y,r); grd.addColorStop(0,lighten(color,.35)); grd.addColorStop(1,color);
+  CTX.fillStyle=grd; CTX.strokeStyle='#111'; CTX.lineWidth=1.5; CTX.beginPath(); CTX.arc(x,y,r,0,Math.PI*2); CTX.fill(); CTX.stroke();
 }
-
-function drawPawn(x,y,color, id) {
-  // cień
-  ctx.save();
-  ctx.fillStyle = 'rgba(0,0,0,.2)';
-  ctx.beginPath(); ctx.ellipse(x, y+10, CS*.22, CS*.10, 0, 0, Math.PI*2); ctx.fill();
-  ctx.restore();
-
-  // pionek
-  const r = CS*.26;
-  const grd = ctx.createRadialGradient(x-r/2, y-r/2, r*.3, x, y, r);
-  grd.addColorStop(0, shade(color, .4));
-  grd.addColorStop(1, color);
-  ctx.fillStyle = grd;
-  ctx.strokeStyle = '#111';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-
-  // numer (debug)
-  ctx.fillStyle = '#111';
-  ctx.font = `${Math.floor(CS*.20)}px ui-sans-serif`;
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  // ctx.fillText(String(id%10), x, y);
-}
-
-function roundRect(ctx, x, y, w, h, r, fill, stroke) {
-  if (w<2*r) r = w/2; if (h<2*r) r = h/2;
-  ctx.beginPath();
-  ctx.moveTo(x+r, y);
-  ctx.arcTo(x+w, y, x+w, y+h, r);
-  ctx.arcTo(x+w, y+h, x, y+h, r);
-  ctx.arcTo(x, y+h, x, y, r);
-  ctx.arcTo(x, y, x+w, y, r);
-  if (fill) ctx.fill(); if (stroke) ctx.stroke();
-}
-
-function shade(hex, k) {
-  // prosty lighten
-  const c = parseInt(hex.slice(1),16);
-  let r=(c>>16)&255, g=(c>>8)&255, b=c&255;
-  r = Math.min(255, Math.floor(r + (255-r)*k));
-  g = Math.min(255, Math.floor(g + (255-g)*k));
-  b = Math.min(255, Math.floor(b + (255-b)*k));
-  return `rgb(${r},${g},${b})`;
-}
-
-function flashStatus(msg) {
-  UI.statusBox.innerHTML = `Tura: <strong>${COLOR_NAMES[state.current]}</strong><br/>Rzut: <strong>${state.die ?? '–'}</strong><br/>${msg}`;
-}
-
-// Obsługa kliknięć – wybór pionka do ruchu
-canvas.addEventListener('click', async (e)=>{
-  if (!state.rolled || animating || state.winner!=null) return;
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-
-  // znajdź pionek obecnego gracza, w którego kliknięto z tolerancją
-  const candidates = [];
-  for (let i=0;i<state.tokens.length;i++) {
-    const t = state.tokens[i];
-    if (t.player !== state.current) continue;
-    const [px,py] = getTokenPixelPosFromState(i);
-    const dist = Math.hypot(px-x, py-y);
-    if (dist <= CS*.28+6) candidates.push(i);
-  }
-  if (candidates.length===0) return;
-
-  // sprawdź legalność ruchu
-  const legal = legalMovesFor(state.current, state.die).map(m=>m.tokenIndex);
-  const selected = candidates.find(i=>legal.includes(i));
-  if (selected==null) return;
-
-  // wykonaj ruch tego pionka
-  const move = legalMovesFor(state.current, state.die).find(m=>m.tokenIndex===selected);
-  await performMove(move);
+function roundRect(x,y,w,h,r,fill,stroke){ if (w<2*r) r=w/2; if (h<2*r) r=h/2; CTX.beginPath(); CTX.moveTo(x+r,y); CTX.arcTo(x+w,y,x+w,y+h,r); CTX.arcTo(x+w,y+h,x,y+h,r); CTX.arcTo(x,y+h,x,y,r); CTX.arcTo(x,y,x+w,y,r); if (fill) CTX.fill(); if (stroke) CTX.stroke(); }
+function lighten(hex,k){ const c=parseInt(hex.slice(1),16); let r=(c>>16)&255,g=(c>>8)&255,b=c&255; r=Math.min(255,r+(255-r)*k); g=Math.min(255,g+(255-g)*k); b=Math.min(255,b+(255-b)*k); return `rgb(${r|0},${g|0},${b|0})`; }
+CV.addEventListener('click', async (e)=>{
+  if (!S.rolled || S.winner!=null) return;
+  const {x,y}=toCanvasPoint(e); const idx=selectNearestTokenIndex(x,y,S.current); if (idx==null) return;
+  const L=legalMovesFor(S.current,S.die); const move=L.find(m=>m.i===idx); if (!move) return; await perform(move);
 });
-
-// UI – przyciski
-UI.rollBtn.addEventListener('click', rollDie);
-UI.restartBtn.addEventListener('click', ()=> newGame(parseInt(UI.playersSelect.value,10)));
-UI.playersSelect.addEventListener('change', ()=> newGame(parseInt(UI.playersSelect.value,10)));
-UI.stacking.addEventListener('change', ()=>{
-  state.stackingAllowed = UI.stacking.checked;
-  draw();
-});
-
-// Pasek postępu do zwycięstwa: liczba pionków na homeIndex=5
-function updateProgressBars() {
-  for (let p=0;p<4;p++) {
-    const bar = UI.pbars[p];
-    if (!bar) continue;
-    const total = TOKENS_PER_PLAYER;
-    let inGoal = 0;
-    for (const t of state.tokens) {
-      if (t.player===p && t.posType==='home' && t.homeIndex===5) inGoal++;
-    }
-    const pct = (inGoal/total)*100;
-    bar.style.width = pct + '%';
-  }
+function selectNearestTokenIndex(x,y,player){
+  let best=null,bd=9999;
+  for (let i=0;i<S.tokens.length;i++){ const t=S.tokens[i]; if (t.player!==player) continue;
+    const [px,py]=getTokenPos(t); const d=Math.hypot(px-x,py-y); if (d<bd && d<=28){ bd=d; best=i; } }
+  return best;
 }
-
-// Start
-newGame(4);
-draw();
+function toCanvasPoint(e){ const r=CV.getBoundingClientRect(); return { x:(e.clientX-r.left)*(CV.width/r.width), y:(e.clientY-r.top)*(CV.height/r.height) }; }
+function pushHistory(){ HISTORY.push(JSON.stringify(S)); if (HISTORY.length>50) HISTORY.shift(); }
+function undo(){ const prev=HISTORY.pop(); if (!prev) return; S=JSON.parse(prev); syncUI(); draw(); save(); }
+function save(){ try{ localStorage.setItem('ludo.mateusz.save', JSON.stringify(S)); }catch{} }
+function load(){ try{ const raw=localStorage.getItem('ludo.mateusz.save'); if (!raw) return false; const st=JSON.parse(raw); if (!st || !Array.isArray(st.tokens)) return false; S=st; HISTORY=[]; syncUI(); draw(); return true; }catch{ return false; } }
+function maybeBot(){
+  if (!UI.bot.checked) return;
+  if (S.current !== S.nPlayers-1) return;
+  setTimeout(()=>{
+    const L=legalMovesFor(S.current,S.die); if (!L.length) return;
+    const score=m=>{ if (m.kind==='ring'){ const enemies=tokensOnRing(m.to).filter(i=>S.tokens[i].player!==S.current); if (enemies.length && !SAFE_SET.has(m.to)) return 100; }
+                     if (m.kind==='tohome') return 80; if (m.kind==='home') return 60; if (m.kind==='enter') return 50; return 10; };
+    L.sort((a,b)=>score(b)-score(a)); perform(L[0]);
+  }, 380);
+}
+function flash(text){ UI.status.innerHTML = `Tura: <b>${NAMES[S.current]}</b><br>Rzut: <b>${S.die ?? '–'}</b><br>${text}`; }
+function setTokenRing(token,idx){ token.pos='ring'; token.ring=idx; token.home=null; }
+function stackedHere(tkn){
+  if (tkn.pos==='ring') return S.tokens.map((tt,i)=>({tt,i})).filter(o=>o.tt.pos==='ring'&&o.tt.ring===tkn.ring&&o.tt.player===tkn.player).map(o=>o.i);
+  if (tkn.pos==='home') return S.tokens.map((tt,i)=>({tt,i})).filter(o=>o.tt.pos==='home'&&o.tt.home===tkn.home&&o.tt.player===tkn.player).map(o=>o.i);
+  return S.tokens.map((tt,i)=>({tt,i})).filter(o=>o.tt.pos==='base'&&o.tt.base===tkn.base&&o.tt.player===tkn.player).map(o=>o.i);
+}
+UI.new.addEventListener('click',()=> newGame(parseInt(UI.players.value,10)));
+UI.players.addEventListener('change',()=> newGame(parseInt(UI.players.value,10)));
+UI.stack.addEventListener('change',()=>{ S.stack = UI.stack.checked; draw(); save(); });
+UI.roll.addEventListener('click', roll);
+UI.undo.addEventListener('click', undo);
+UI.bot.addEventListener('change',()=> save());
+UI.sfx.addEventListener('change',()=>{});
+if(!load()) newGame(4);
 </script>
 </body>
 </html>
